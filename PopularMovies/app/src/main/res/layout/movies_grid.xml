@@ -11,4 +11,12 @@
         android:layout_gravity="center"
         android:contentDescription="@string/movie_poster"
         android:id="@+id/iv_poster"/>
+    <ProgressBar
+        android:id="@+id/pb_loading_image"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone" />
 </LinearLayout>

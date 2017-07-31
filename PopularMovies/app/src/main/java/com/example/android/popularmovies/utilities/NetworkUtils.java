@@ -34,6 +34,8 @@ public final class NetworkUtils {
     private static final String API_KEY = "";
     private static final String QUERY_PARAM = "api_key";
 
+    private static final int MILISECONDS_FOR_TIMEOUT = 15000;
+
     private static String convertDate(String date){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         try {
@@ -65,6 +67,7 @@ public final class NetworkUtils {
 
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        urlConnection.setConnectTimeout(MILISECONDS_FOR_TIMEOUT);
         try {
             InputStream in = urlConnection.getInputStream();
 

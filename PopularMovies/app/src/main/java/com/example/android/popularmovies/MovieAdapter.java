@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.android.popularmovies.objects.MovieData;
 import com.example.android.popularmovies.utilities.NetworkUtils;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 
@@ -41,7 +43,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
         MovieData movieData = mMoviesData[position];
         String urlPoster= NetworkUtils.POSTER_IMAGE_BASE_URL + movieData.PosterPath();
-        Picasso.with(mContext).load(urlPoster).into(holder.mPosterImageView);
+        holder.mProgressBar.setVisibility(View.VISIBLE);
+        Picasso.with(mContext).load(urlPoster).placeholder(R.mipmap.ic_launcher).into(holder.mPosterImageView,  new ImageLoadedCallback(holder.mProgressBar) {
+            @Override
+            public void onSuccess() {
+                if (this.progressBar != null) {
+                    this.progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -62,10 +72,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mPosterImageView;
+        public final ProgressBar mProgressBar;
 
         public MovieAdapterViewHolder(View view) {
             super(view);
             mPosterImageView = (ImageView) view.findViewById(R.id.iv_poster);
+            mProgressBar = (ProgressBar) view.findViewById(R.id.pb_loading_image);
             view.setOnClickListener(this);
         }
 
@@ -74,6 +86,24 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             int adapterPosition = getAdapterPosition();
             MovieData movieData = mMoviesData[adapterPosition];
             mClickHandler.onClick(movieData);
+        }
+    }
+
+    private class ImageLoadedCallback implements Callback {
+        final ProgressBar progressBar;
+
+        public  ImageLoadedCallback(ProgressBar progBar){
+            progressBar = progBar;
+        }
+
+        @Override
+        public void onSuccess() {
+
+        }
+
+        @Override
+        public void onError() {
+
         }
     }
 }
