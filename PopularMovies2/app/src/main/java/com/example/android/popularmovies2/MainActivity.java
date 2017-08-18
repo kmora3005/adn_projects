@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -24,6 +25,7 @@ import com.example.android.popularmovies2.data.MovieContract;
 import com.example.android.popularmovies2.sync.MovieSyncUtils;
 
 
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, MovieAdapter.MovieAdapterOnClickHandler {
 
     private static final String[] MAIN_MOVIE_PROJECTION = {
@@ -35,7 +37,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final int INDEX_MOVIE_POSTER = 1;
 
     private static final int ID_MOVIE_LOADER = 30;
+    private static final String SCROLL_POSITION_KEY = "ScrollPosition";
 
+    private GridLayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private int mPosition = RecyclerView.NO_POSITION;
@@ -55,11 +59,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mInfoMessageView = (TextView) findViewById(R.id.tv_info_no_favorites);
 
         int numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? 2:4;
-        GridLayoutManager layout = new GridLayoutManager(this,numColumns);
-        mRecyclerView.setLayoutManager(layout);
+        mLayoutManager = new GridLayoutManager(this,numColumns);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mMovieAdapter = new MovieAdapter(this,this);
         mRecyclerView.setAdapter(mMovieAdapter);
+
+        if(savedInstanceState != null){
+            mPosition = savedInstanceState.getInt(SCROLL_POSITION_KEY);
+            mLayoutManager.scrollToPosition(mPosition);
+        }
 
         showLoadingIndicator();
         getSupportLoaderManager().initLoader(ID_MOVIE_LOADER, null, this);
@@ -161,5 +170,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mMovieAdapter.swapCursor(null);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        mPosition=mLayoutManager.findFirstVisibleItemPosition();
+        outState.putInt(SCROLL_POSITION_KEY, mPosition);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState != null){
+            mPosition = savedInstanceState.getInt(SCROLL_POSITION_KEY);
+            mLayoutManager.scrollToPosition(mPosition);
+        }
+    }
 
 }

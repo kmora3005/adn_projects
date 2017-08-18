@@ -1,153 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <LinearLayout
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        tools:context=".DetailActivity">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/title_size"
-            android:textStyle="bold"
-            android:padding="8dp"
-            android:layout_gravity="center"
-            android:id="@+id/tv_title"/>
-        <ImageButton android:id="@+id/ib_favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:src="@android:drawable/btn_star"
-            android:background="#00ffffff"
-            android:onClick="onToggleStar"
-            android:contentDescription="@string/mark_as_favorite" />
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:padding="8dp"
-            android:contentDescription="@string/movie_poster"
-            android:id="@+id/iv_poster"/>
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            tools:context=".DetailActivity">
+
             <TextView
+                android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:layout_marginTop="16dp"
+                android:padding="@dimen/default_padding"
+                android:textSize="@dimen/title_text_size"
                 android:textStyle="bold"
-                android:padding="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/ib_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="66dp"
+                android:background="#00ffffff"
+                android:contentDescription="@string/mark_as_favorite"
+                android:onClick="onToggleStar"
+                android:src="@android:drawable/btn_star"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_poster"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                android:contentDescription="@string/movie_poster"
+                android:padding="@dimen/default_padding"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+
+            <TextView
+                android:id="@+id/tv_release_date_text"
+                android:layout_width="120dp"
+                android:layout_height="33dp"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                android:padding="@dimen/default_padding"
                 android:text="@string/release_date"
-                android:id="@+id/tv_release_date_text"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
-                android:padding="8dp"
-                android:id="@+id/tv_release_date"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
+                android:textSize="@dimen/default_text_size"
                 android:textStyle="bold"
-                android:padding="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
+
+            <TextView
+                android:id="@+id/tv_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:padding="@dimen/default_padding"
+                android:textSize="@dimen/default_text_size"
+                app:layout_constraintLeft_toRightOf="@+id/tv_release_date_text"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/iv_poster" />
+
+
+            <TextView
+                android:id="@+id/tv_vote_average_text"
+                android:layout_width="119dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:padding="@dimen/default_padding"
                 android:text="@string/vote_average"
-                android:id="@+id/tv_vote_average_text"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
-                android:padding="8dp"
-                android:id="@+id/tv_vote_average"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
+                android:textSize="@dimen/default_text_size"
                 android:textStyle="bold"
-                android:padding="8dp"
-                android:text="@string/overview"
-                android:id="@+id/tv_synopsis_text"/>
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/tv_release_date_text" />
+
             <TextView
+                android:id="@+id/tv_vote_average"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"
-                android:padding="8dp"
-                android:id="@+id/tv_synopsis"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size"
-            android:textStyle="bold"
-            android:padding="8dp"
-            android:text="@string/videos"
-            android:id="@+id/tv_videos"/>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_videos"
-            android:layout_width="match_parent"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/tv_error_message_videos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/error_no_connection"
-            android:textSize="20sp"
-            android:visibility="invisible" />
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:padding="@dimen/default_padding"
+                android:textSize="@dimen/default_text_size"
+                app:layout_constraintLeft_toRightOf="@+id/tv_vote_average_text"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size"
-            android:textStyle="bold"
-            android:padding="8dp"
-            android:text="@string/reviews"
-            android:id="@+id/tv_reviews"/>
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_reviews"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/tv_error_message_reviews"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="@string/error_no_connection"
-            android:textSize="20sp"
-            android:visibility="invisible" />
 
-        <ProgressBar
-            android:id="@+id/pb_loading_image"
-            android:layout_height="42dp"
-            android:layout_width="42dp"
-            android:layout_gravity="center"
-            android:visibility="invisible" />
-        <ProgressBar
-            android:id="@+id/pb_loading_videos"
-            android:layout_height="42dp"
-            android:layout_width="42dp"
-            android:layout_gravity="center"
-            android:visibility="invisible" />
-        <ProgressBar
-            android:id="@+id/pb_loading_reviews"
-            android:layout_height="42dp"
-            android:layout_width="42dp"
-            android:layout_gravity="center"
-            android:visibility="invisible" />
-    </LinearLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/tv_synopsis_text"
+                android:layout_width="117dp"
+                android:layout_height="33dp"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                android:padding="@dimen/default_padding"
+                android:text="@string/overview"
+                android:textSize="@dimen/default_text_size"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_vote_average_text" />
+
+            <TextView
+                android:id="@+id/tv_synopsis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:padding="@dimen/default_padding"
+                android:textSize="@dimen/default_text_size"
+                android:layout_marginRight="@dimen/default_right_margin"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/tv_synopsis_text"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+
+            <TextView
+                android:id="@+id/tv_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                android:padding="@dimen/default_padding"
+                android:text="@string/videos"
+                android:textSize="@dimen/default_text_size"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_synopsis" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_videos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_videos" />
+
+            <TextView
+                android:id="@+id/tv_error_message_videos"
+                android:layout_width="346dp"
+                android:layout_height="75dp"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:padding="@dimen/default_padding"
+                android:text="@string/error_no_connection"
+                android:textSize="@dimen/default_text_size"
+                android:textStyle="italic"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/tv_videos" />
+
+            <TextView
+                android:id="@+id/tv_reviews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                android:padding="@dimen/default_padding"
+                android:text="@string/reviews"
+                android:textSize="@dimen/default_text_size"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_videos" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_reviews"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_reviews" />
+
+            <TextView
+                android:id="@+id/tv_error_message_reviews"
+                android:layout_width="348dp"
+                android:layout_height="66dp"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:padding="@dimen/default_padding"
+                android:text="@string/error_no_connection"
+                android:textSize="@dimen/default_text_size"
+                android:textStyle="italic"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="@dimen/default_top_margin"
+                app:layout_constraintTop_toBottomOf="@+id/tv_reviews" />
+
+            <ProgressBar
+                android:id="@+id/pb_loading_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:layout_editor_absoluteY="129dp" />
+
+            <ProgressBar
+                android:id="@+id/pb_loading_videos"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:layout_editor_absoluteY="466dp" />
+
+            <ProgressBar
+                android:id="@+id/pb_loading_reviews"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/default_left_margin"
+                android:layout_marginRight="@dimen/default_right_margin"
+                android:visibility="invisible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:layout_editor_absoluteY="686dp" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</layout>

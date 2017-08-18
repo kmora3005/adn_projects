@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.LoaderManager;
@@ -14,16 +15,14 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.popularmovies2.data.MovieContract;
 import com.example.android.popularmovies2.data.ReviewData;
 import com.example.android.popularmovies2.data.VideoData;
+import com.example.android.popularmovies2.databinding.ActivityDetailBinding;
 import com.example.android.popularmovies2.sync.MovieSyncUtils;
 import com.example.android.popularmovies2.utilities.NetworkUtils;
 import com.squareup.picasso.Callback;
@@ -53,51 +52,43 @@ public class DetailActivity extends AppCompatActivity implements
     private static final int INDEX_MOVIE_IS_FAVORITE = 6;
 
     private static final int ID_DETAIL_LOADER = 31;
+    private static final String SCROLL_POSITION_VIDEOS_KEY = "ScrollPositionVideos";
+    private static final String SCROLL_POSITION_REVIEWS_KEY = "ScrollPositionReviews";
 
     private Uri mUri;
     private boolean isFavorite;
     private int movieId;
 
-    private RecyclerView mVideoRecyclerView, mReviewRecyclerView;
     private VideoAdapter mVideoAdapter;
     private ReviewAdapter mReviewAdapter;
-
-    private TextView mTitleTextView,mReleaseDateTextView, mVoteAverageTextView,mPlotSypnosisTextView, mErrorMessageVideos, mErrorMessageReviews;
-    private ImageView mPosterImageView;
-    private ImageButton mFavorite;
-    private ProgressBar mLoadingImage,mLoadingVideos,mLoadingReviews;
+    private ActivityDetailBinding mDetailBinding;
+    private GridLayoutManager mLayoutManagerVideos;
+    private GridLayoutManager mLayoutManagerReviews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        mDetailBinding = DataBindingUtil.setContentView(this,R.layout.activity_detail);
 
-        mTitleTextView = (TextView) findViewById(R.id.tv_title);
-        mPosterImageView = (ImageView) findViewById(R.id.iv_poster);
-        mReleaseDateTextView = (TextView) findViewById(R.id.tv_release_date);
-        mVoteAverageTextView = (TextView) findViewById(R.id.tv_vote_average);
-        mPlotSypnosisTextView = (TextView) findViewById(R.id.tv_synopsis);
-        mFavorite = (ImageButton) findViewById(R.id.ib_favorite);
-
-        mLoadingImage = (ProgressBar) findViewById(R.id.pb_loading_image);
-        mLoadingVideos = (ProgressBar) findViewById(R.id.pb_loading_videos);
-        mLoadingReviews = (ProgressBar) findViewById(R.id.pb_loading_reviews);
-        mErrorMessageVideos = (TextView) findViewById(R.id.tv_error_message_videos);
-        mErrorMessageReviews = (TextView) findViewById(R.id.tv_error_message_reviews);
-
-        mVideoRecyclerView = (RecyclerView) findViewById(R.id.rv_videos);
         int numColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? 2:4;
-        GridLayoutManager layout = new GridLayoutManager(this,numColumns);
-        mVideoRecyclerView.setLayoutManager(layout);
-        mVideoRecyclerView.setHasFixedSize(true);
+        mLayoutManagerVideos = new GridLayoutManager(this,numColumns);
+        mDetailBinding.rvVideos.setLayoutManager(mLayoutManagerVideos);
+        mDetailBinding.rvVideos.setHasFixedSize(true);
         mVideoAdapter = new VideoAdapter(this,this);
-        mVideoRecyclerView.setAdapter(mVideoAdapter);
+        mDetailBinding.rvVideos.setAdapter(mVideoAdapter);
 
-        mReviewRecyclerView = (RecyclerView) findViewById(R.id.rv_reviews);
-        layout = new GridLayoutManager(this,1);
-        mReviewRecyclerView.setLayoutManager(layout);
+        mLayoutManagerReviews = new GridLayoutManager(this,1);
+        mDetailBinding.rvReviews.setLayoutManager(mLayoutManagerReviews);
+        mDetailBinding.rvReviews.setHasFixedSize(true);
         mReviewAdapter = new ReviewAdapter();
-        mReviewRecyclerView.setAdapter(mReviewAdapter);
+        mDetailBinding.rvReviews.setAdapter(mReviewAdapter);
+
+        if(savedInstanceState != null){
+            int position = savedInstanceState.getInt(SCROLL_POSITION_VIDEOS_KEY);
+            mLayoutManagerVideos.scrollToPosition(position);
+            position = savedInstanceState.getInt(SCROLL_POSITION_REVIEWS_KEY);
+            mLayoutManagerReviews.scrollToPosition(position);
+        }
 
         mUri = getIntent().getData();
         if (mUri == null)
@@ -134,10 +125,10 @@ public class DetailActivity extends AppCompatActivity implements
 
         movieId= data.getInt(INDEX_MOVIE_ID);
         String title = data.getString(INDEX_MOVIE_TITLE);
-        mTitleTextView.setText(title);
+        mDetailBinding.tvTitle.setText(title);
         String poster = data.getString(INDEX_MOVIE_POSTER);
         String urlPoster = NetworkUtils.POSTER_IMAGE_BASE_URL +poster;
-        Picasso.with(this).load(urlPoster).placeholder(R.mipmap.ic_launcher).into(mPosterImageView,  new ImageLoadedCallback(mLoadingImage) {
+        Picasso.with(this).load(urlPoster).placeholder(R.mipmap.ic_launcher).into(mDetailBinding.ivPoster,  new ImageLoadedCallback(mDetailBinding.pbLoadingImage) {
             @Override
             public void onSuccess() {
                 if (this.progressBar != null) {
@@ -147,19 +138,19 @@ public class DetailActivity extends AppCompatActivity implements
         });
 
         String releaseDate =  data.getString(INDEX_MOVIE_RELEASE_DATE);
-        mReleaseDateTextView.setText(releaseDate);
+        mDetailBinding.tvReleaseDate.setText(releaseDate);
         String voteAverage = String.valueOf(data.getString(INDEX_MOVIE_VOTE_AVG));
-        mVoteAverageTextView.setText(voteAverage);
+        mDetailBinding.tvVoteAverage.setText(voteAverage);
         String sypnosis = data.getString(INDEX_MOVIE_SYPNOSIS);
-        mPlotSypnosisTextView.setText(sypnosis);
+        mDetailBinding.tvSynopsis.setText(sypnosis);
         int favorite= data.getInt(INDEX_MOVIE_IS_FAVORITE);
         if (favorite==1){
             isFavorite = true;
-            mFavorite.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
+            mDetailBinding.ibFavorite.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
         }
         else{
             isFavorite = false;
-            mFavorite.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.star_default_color, null));
+            mDetailBinding.ibFavorite.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.star_default_color, null));
         }
 
         showVideoDataView();
@@ -177,9 +168,11 @@ public class DetailActivity extends AppCompatActivity implements
         ContentValues values = new ContentValues();
         if (isFavorite){
             values.put(MovieContract.MovieEntry.COLUMN_IS_FAVORITE, 0);
+            Toast.makeText(this,R.string.movie_as_no_favorite,Toast.LENGTH_LONG).show();
         }
         else {
             values.put(MovieContract.MovieEntry.COLUMN_IS_FAVORITE, 1);
+            Toast.makeText(this,R.string.movie_as_favorite,Toast.LENGTH_LONG).show();
         }
 
         String[] selectionArguments = new String[]{Integer.toString(movieId) } ;
@@ -188,11 +181,13 @@ public class DetailActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(VideoData videoData) {
-        Intent applicationIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoData.Key()));
+        Uri uri =Uri.parse("vnd.youtube:" + videoData.Key());
+        Intent applicationIntent = new Intent(Intent.ACTION_VIEW, uri);
         try {
             startActivity(applicationIntent);
         } catch (ActivityNotFoundException ex) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(NetworkUtils.YOUTUBE_VIDEO_BASE_URL + videoData.Key()));
+            uri = Uri.parse(NetworkUtils.YOUTUBE_VIDEO_BASE_URL + videoData.Key());
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(browserIntent);
         }
     }
@@ -216,13 +211,13 @@ public class DetailActivity extends AppCompatActivity implements
     }
 
     private void showVideoDataView() {
-        mErrorMessageVideos.setVisibility(View.INVISIBLE);
-        mVideoRecyclerView.setVisibility(View.VISIBLE);
+        mDetailBinding.tvErrorMessageVideos.setVisibility(View.INVISIBLE);
+        mDetailBinding.rvVideos.setVisibility(View.VISIBLE);
     }
 
     private void showVideoErrorMessage() {
-        mVideoRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageVideos.setVisibility(View.VISIBLE);
+        mDetailBinding.rvVideos.setVisibility(View.INVISIBLE);
+        mDetailBinding.tvErrorMessageVideos.setVisibility(View.VISIBLE);
     }
 
     private class FetchVideoTask extends AsyncTask<Integer, Void, VideoData[]> {
@@ -230,7 +225,7 @@ public class DetailActivity extends AppCompatActivity implements
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mLoadingVideos.setVisibility(View.VISIBLE);
+            mDetailBinding.pbLoadingVideos.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -256,7 +251,7 @@ public class DetailActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(VideoData[] videosData) {
-            mLoadingVideos.setVisibility(View.INVISIBLE);
+            mDetailBinding.pbLoadingVideos.setVisibility(View.INVISIBLE);
             if (videosData != null) {
                 showVideoDataView();
                 mVideoAdapter.setVideosData(videosData);
@@ -267,13 +262,13 @@ public class DetailActivity extends AppCompatActivity implements
     }
 
     private void showReviewDataView() {
-        mErrorMessageReviews.setVisibility(View.INVISIBLE);
-        mReviewRecyclerView.setVisibility(View.VISIBLE);
+        mDetailBinding.tvErrorMessageReviews.setVisibility(View.INVISIBLE);
+        mDetailBinding.rvReviews.setVisibility(View.VISIBLE);
     }
 
     private void showReviewErrorMessage() {
-        mReviewRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageReviews.setVisibility(View.VISIBLE);
+        mDetailBinding.rvReviews.setVisibility(View.INVISIBLE);
+        mDetailBinding.tvErrorMessageReviews.setVisibility(View.VISIBLE);
     }
 
     private class FetchReviewTask extends AsyncTask<Integer, Void, ReviewData[]> {
@@ -281,7 +276,7 @@ public class DetailActivity extends AppCompatActivity implements
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mLoadingReviews.setVisibility(View.VISIBLE);
+            mDetailBinding.pbLoadingReviews.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -305,17 +300,39 @@ public class DetailActivity extends AppCompatActivity implements
 
         @Override
         protected void onPostExecute(ReviewData[] reviewsData) {
-            mLoadingReviews.setVisibility(View.INVISIBLE);
+            mDetailBinding.pbLoadingReviews.setVisibility(View.INVISIBLE);
             if (reviewsData != null) {
                 showReviewDataView();
                 mReviewAdapter.setReviewsData(reviewsData);
                 if (reviewsData.length==0){
-                    mErrorMessageReviews.setText(R.string.info_no_data);
+                    mDetailBinding.tvErrorMessageReviews.setText(R.string.info_no_data);
                     showReviewErrorMessage();
                 }
             } else {
                 showReviewErrorMessage();
             }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        int position = mLayoutManagerVideos.findFirstVisibleItemPosition();
+        outState.putInt(SCROLL_POSITION_VIDEOS_KEY, position);
+        position = mLayoutManagerReviews.findFirstVisibleItemPosition();
+        outState.putInt(SCROLL_POSITION_REVIEWS_KEY, position);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState != null){
+            int position = savedInstanceState.getInt(SCROLL_POSITION_VIDEOS_KEY);
+            mLayoutManagerVideos.scrollToPosition(position);
+            position = savedInstanceState.getInt(SCROLL_POSITION_REVIEWS_KEY);
+            mLayoutManagerReviews.scrollToPosition(position);
         }
     }
 }
